@@ -1,15 +1,25 @@
+from Items import Items
+from Items import Item
+
 class GameState:
     def __init__(self, rounds, player_turn=0):
         self.rounds = rounds #e.g., [0, 1, 0, 1, 1, 0]
         self.index = 0
         self.lives = [2, 2]
         self.turn = player_turn
+        self.items = Items()
 
 
     #return legal moves based on current state
     def legalMoves(self):
+        moves = []
         if self.index < len(self.rounds):
-            return ["shoot_self", "shoot_opponent"]
+            moves.append("Shoot yourself")
+            moves.append("Shoot opponent")
+            for item_name, item in self.items.__dict__.items():
+                if isinstance(item, Item) and item.quantity > 0:
+                    moves.append(f"Use {item_name}")
+            return moves
         return [] #no actions available if all rounds are spent
     
 
@@ -35,15 +45,18 @@ class GameState:
 
         round = self.rounds[self.index]
 
-        if action == "shoot_opponent":
+        if action == "Shoot opponent":
             if round == 1:
                 nextState.lives[1 - self.turn] -= 1
 
-        elif action == "shoot_self":
+        elif action == "Shoot yourself":
             if round == 1:
                 nextState.lives[self.turn] -= 1
             else:
                 #blank, the current player gets another turn
                 nextState.turn = self.turn
+        elif action == "Use Beer Can":
+            if self.items.use_item(self.items.beerCan):
+                nextState.index += 1
 
         return nextState
