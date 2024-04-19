@@ -2,12 +2,14 @@ import numpy as np
 from collections import defaultdict
 
 class MCTSNode():
+
+    #initialize MCTS Node with state, parent, and parentMove
     def __init__(self, state, parent=None, parentMove=None):
-        self.state = state #state of the game
-        self.parent = parent #None for the root node; for other nodes, it's the node from which it is derived
-        self.parentMove = parentMove #None for the root node; for other nodes, it's the action its parent carried out
-        self.children = [] #contains all possible actions from the current node
-        self.visits = 0 #Number of times current node is visited
+        self.state = state
+        self.parent = parent
+        self.parentMove = parentMove
+        self.children = []
+        self.visits = 0
         self.results = defaultdict(int)
         self.results[1] = 0 
         self.results[-1] = 0
@@ -15,37 +17,38 @@ class MCTSNode():
         return
     
 
-    #returns the list of untried actions from a given state
+    #return untried actions from current state
     def legalMoves(self):
         return self.state.legalMoves()
 
+
+    #update statistics based on result
     def updateStats(self, result):
         self.visits += 1
         self.results[result] += 1
 
+
+    #return win rate based on visit count
     def winRate(self):
-        wins = self.results[1]  # Assuming 1 is a win
+        wins = self.results[1]
         if self.visits == 0:
             return 0
         return wins / self.visits
 
-    #returns the difference of wins - losses
+
+    #return difference between wins and losses
     def q(self):
         wins = self.results[1]
         losses = self.results[-1]
         return wins - losses
     
 
-    #returns the number of times each node is visited
+    #return number of visits
     def n(self):
         return self.visits
     
 
-    #Next state is generated depending on the action which is carried out.
-    #In this step all the possible child nodes corresponding to generated 
-    #states are appended to the children array and the child_node is returned. 
-    #The states which are possible from the present state are all generated and 
-    #the child_node corresponding to this generated state is returned.
+    #generate next state and corresponding child node
     def expand(self):
         action = self.untriedMoves.pop()
         nextState = self.state.move(action)
@@ -54,13 +57,12 @@ class MCTSNode():
         return child_node
     
 
-    #check if the current node is terminal or not (game over)
+    #check if current node is terminal
     def isTerminal(self):
         return self.state.gameOver()
     
 
-    #from the current state, entire game is simulated till there is an outcome for the game
-    #1 = win, 0 = tie, -1 = loss
+    #simulate game until outcome and return result
     def rollout(self):
         currentRolloutState = self.state
 
@@ -71,10 +73,7 @@ class MCTSNode():
         return currentRolloutState.gameResult()
     
 
-    #all the statistics for the nodes are updated
-    #untill the parent node is reached, the number of visits for each node is incremented by 1
-    #if result is 1, then the win is incremented by 1
-    #otherwise loss is incremented by 1
+    #update statistics recursively up to root node
     def backPropagate(self, result):
         self.visits += 1.
         self.results[result] += 1.
@@ -82,37 +81,23 @@ class MCTSNode():
             self.parent.backPropagate(result)
 
 
-    #all the actions are popped out of _untried_actions one by one. empty = size is 0, I.E fully expanded
+    #check if all moves are explored
     def fullyExpanded(self):
         return len(self.untriedMoves) == 0
     
-    #selects the best child out of the children array. 
-    #the first term in the formula corresponds to exploitation and the second term corresponds to exploration
+
+    #select best child based on UCB1 formula
     def bestPath(self, cParam=0.1):
-        # Calculate the weights for each child node based on the UCB1 formula (optimism in the face of uncertainty/Upper Confidence Bound),
-        # which balances between exploitation and exploration in the MCTS algorithm.
-        # For each child node c, calculate the weight using the UCB1 formula:
-        #   - (c.q() / c.n()): The average reward (q-value) of node c divided by
-        #                      the number of times node c has been visited (exploitation).
-        #   - cParam * np.sqrt((2 * np.log(self.n()) / c.n())): The exploration term
-        #       - np.log(self.n()): Natural logarithm of the number of times the current
-        #                           node has been visited.
-        #       - c.n(): Number of times node c has been visited.
-        #       - cParam: Exploration parameter that controls the balance between
-        #                 exploitation and exploration. A higher cParam value promotes
-        #                 more exploration.
-        #   - The sum of these two terms represents the UCB1 value, which guides
-        #     the selection of the next child node to explore in the MCTS algorithm.
         weights = [(c.q() / c.n()) + cParam * np.sqrt((2 * np.log(self.n()) / c.n())) for c in self.children]
         return self.children[np.argmax(weights)]
     
 
-    #randomly selects a move out of possible moves
+    #select action randomly for rollout
     def rolloutPolicy(self, possibleActions):
         return possibleActions[np.random.randint(len(possibleActions))]
 
     
-    #selects node to run rollout()
+    #select node based on tree policy
     def treePolicy(self):
         currentNode = self
         while not currentNode.isTerminal():
@@ -123,7 +108,7 @@ class MCTSNode():
         return currentNode
     
 
-    #returns the node corresponding to best possible move through expansion, simulation and backpropagation
+    #run simulations and return best move
     def bestMove(self):
         simNo = 100
 
