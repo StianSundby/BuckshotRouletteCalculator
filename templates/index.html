@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Buckshot Calculator</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+		<script src="{{ url_for('static', filename='script.js') }}"></script>
+	</head>
+	<body>
+		<form action="/submit_configuration" method="post">
+			<div class="config-group">
+				<label for="mode">Mode:</label>
+				<select name="mode" id="mode">
+					<option value="0">Round</option>
+					<option value="1">Match</option>
+				</select>
+			</div>
+			<div class="config-group">
+				<label for="simulations">Simulations:</label>
+				<input type="number" name="simulations" id="simulations" value="5000" />
+			</div>
+			<div class="rounds">
+				{% for i in range(1, 7) %}
+				<div class="round-group">
+					<div class="round">
+						<input
+							type="checkbox"
+							name="round{{ i }}"
+							value="1"
+							id="live{{ i }}"
+							class="live"
+							onchange="updateCheckboxes('{{ i }}', 'live')"
+						/>
+						<label for="live{{ i }}" class="live-label"></label>
+						<input
+							type="checkbox"
+							name="round{{ i }}"
+							value="0"
+							id="blank{{ i }}"
+							class="blank"
+							onchange="updateCheckboxes('{{ i }}', 'blank')"
+						/>
+						<label for="blank{{ i }}" class="blank-label"></label>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+			<input type="submit" value="Submit" />
+		</form>
+	</body>
+</html>

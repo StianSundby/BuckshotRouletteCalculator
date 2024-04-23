@@ -1,0 +1,39 @@
+.round-group {
+    border: 2px solid black;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.round {
+    margin: 2px;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    padding: 5px;
+    background-color: grey;
+    border-radius: 50%;
+}
+
+input[type="checkbox"].live + label {
+    background-color: red;
+}
+
+input[type="checkbox"].blank + label {
+    background-color: blue;
+}
+
+input[type="checkbox"]:checked + label {
+    filter: none;
+    opacity: 1.0;
+}
+
+input[type="checkbox"]:not(:checked) + label {
+    opacity: 0.5;
+}
