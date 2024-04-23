@@ -4,10 +4,11 @@ from collections import defaultdict
 class MCTSNode():
 
     #initialize MCTS Node with state, parent, and parentMove
-    def __init__(self, state, parent=None, parentMove=None):
+    def __init__(self, state, parent=None, parentMove=None, mode=1):
         self.state = state
         self.parent = parent
         self.parentMove = parentMove
+        self.mode = mode
         self.children = []
         self.visits = 0
         self.results = defaultdict(int)
@@ -52,7 +53,7 @@ class MCTSNode():
     def expand(self):
         action = self.untriedMoves.pop()
         nextState = self.state.move(action)
-        child_node = MCTSNode(nextState, parent=self, parentMove=action)
+        child_node = MCTSNode(nextState, parent=self, parentMove=action, mode=self.mode)
         self.children.append(child_node)
         return child_node
     
@@ -65,7 +66,6 @@ class MCTSNode():
     #simulate game until outcome and return result
     def rollout(self):
         currentRolloutState = self.state
-
         while not currentRolloutState.gameOver():
             possibleMoves = currentRolloutState.legalMoves()
             action = self.rolloutPolicy(possibleMoves)
@@ -109,12 +109,15 @@ class MCTSNode():
     
 
     #run simulations and return best move
-    def bestMove(self):
-        simNo = 100
-
+    def bestMove(self, simNo):
         for i in range(simNo):
             v = self.treePolicy()
             reward = v.rollout()
             v.backPropagate(reward)
         
-        return self.bestPath(cParam=0.)
+        if self.mode == 0:
+            return max(self.children, key=lambda x: x.winRate())
+        elif self.mode == 1:
+            return max(self.children, key=lambda x: x.q() / x.n())
+        else:
+            return self.bestPath(cParam=0.)
