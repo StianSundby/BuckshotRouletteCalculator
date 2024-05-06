@@ -1,5 +1,5 @@
-from Calc.Items import Items
-from Calc.Items import Item
+from Items import Items
+from Items import Item
 
 class GameState:
     def __init__(self, rounds, player_turn=0):

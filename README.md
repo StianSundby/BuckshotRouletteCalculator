@@ -48,7 +48,7 @@ By combining these objectives, UCB1 aims to select nodes that are both promising
  - [Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/)
  - [Mike Klubnika](https://mikeklubnika.itch.io/)
  - [Readme.so](https://readme.so)
- 
+ - [Sakura](https://github.com/oxalorg/sakura)
 
 
 ## License

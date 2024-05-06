@@ -1,5 +1,5 @@
-from Calc.GameState import GameState
-from Calc.MCTSNode import MCTSNode
+from GameState import GameState
+from MCTSNode import MCTSNode
 
 #initialize root node and find best move
 def main(simNo, goal, initialRounds):
@@ -21,4 +21,5 @@ def main(simNo, goal, initialRounds):
     return selectedNode
 
 if __name__ == "__main__":
-    result = main(100000, 0, [0, 1, 0, 1, 1, 0])
+    result = main(100000, 1, [0, 1, 0, 1, 1, 0])
+    print(result)

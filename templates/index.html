@@ -2,8 +2,10 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Buckshot Calculator</title>
 		<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura.css" type="text/css" />
 		<script src="{{ url_for('static', filename='script.js') }}"></script>
 	</head>
 	<body>
@@ -19,28 +21,35 @@
 				<label for="simulations">Simulations:</label>
 				<input type="number" name="simulations" id="simulations" value="5000" />
 			</div>
-			<div class="rounds">
+			<div class="shell-container">
 				{% for i in range(1, 7) %}
 				<div class="round-group">
-					<div class="round">
-						<input
-							type="checkbox"
-							name="round{{ i }}"
-							value="1"
-							id="live{{ i }}"
-							class="live"
-							onchange="updateCheckboxes('{{ i }}', 'live')"
-						/>
-						<label for="live{{ i }}" class="live-label"></label>
-						<input
-							type="checkbox"
-							name="round{{ i }}"
-							value="0"
-							id="blank{{ i }}"
-							class="blank"
-							onchange="updateCheckboxes('{{ i }}', 'blank')"
-						/>
-						<label for="blank{{ i }}" class="blank-label"></label>
+					<div class="shells">
+						<label for="live{{ i }}" class="checkbox-label">
+							<input
+								type="checkbox"
+								name="round{{ i }}"
+								value="1"
+								id="live{{ i }}"
+								class="live"
+								onclick="updateCheckboxes('{{ i }}', 'live')"
+							/>
+							<img
+								src="{{ url_for('static', filename='resources/images/shotgun_shell.png') }}"
+								class="checkbox-image custom-size"
+							/>
+						</label>
+						<label for="blank{{ i }}" class="checkbox-label">
+							<input
+								type="checkbox"
+								name="round{{ i }}"
+								value="0"
+								id="blank{{ i }}"
+								class="blank"
+								onclick="updateCheckboxes('{{ i }}', 'blank')"
+							/>
+							<img src="{{ url_for('static', filename='resources/images/shotgun_shell.png') }}" class="custom-size" />
+						</label>
 					</div>
 				</div>
 				{% endfor %}
